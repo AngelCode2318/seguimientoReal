@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block styles %}<link rel="stylesheet" href="{{ url_for('static', filename='vendor/leaflet/leaflet.css') }}">{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/leaflet/leaflet.js') }}" defer></script>
+<script src="{{ url_for('static', filename='vendor/socket.io.min.js') }}" defer></script>
+<script src="{{ url_for('static', filename='map.js') }}" defer></script>
+{% endblock %}
+{% block body_class %}map-page{% endblock %}
+{% block body %}
+<header class="app-header">
+  <a class="brand" href="/"><span class="brand-round">OCC</span><span>OLD CLASSIC<span class="brand-sub">C L U B</span></span></a>
+  <div class="header-middle"><svg class="icon"><use href="#i-pin"/></svg><span>EL PUNTO DE ENCUENTRO</span></div>
+  <div class="header-actions"><button id="profile-open" class="profile-button" aria-label="Editar mi perfil"><span class="avatar">{{ user.alias[:1]|upper }}</span><span id="header-alias">{{ user.alias }}</span><svg class="icon"><use href="#i-user"/></svg></button><button id="logout" class="icon-button" title="Cerrar sesión" aria-label="Cerrar sesión"><svg class="icon"><use href="#i-exit"/></svg></button></div>
+</header>
+<main class="club-layout">
+  <aside class="sidebar">
+    <div class="sidebar-heading"><span class="eyebrow">JUNTOS, EN EL CAMINO</span><h1>La rodada,<br>en el mapa.</h1><p class="muted">La misma pasión. Ahora, más cerca.</p></div>
+    <section class="sharing-card" aria-label="Compartir mi ubicación">
+      <div class="sharing-heading"><span class="sharing-symbol"><svg class="icon"><use href="#i-pin"/></svg></span><div><strong id="share-title">Tú eliges cuándo.</strong><p id="share-description">Tu ubicación está desactivada.</p></div></div>
+      <button class="button button-primary share-button" type="button"><svg class="icon"><use href="#i-pin"/></svg><span>Compartir mi ubicación</span></button>
+      <p class="sharing-tip">Todos los registrados podrán verte mientras compartas. Mantén la web abierta y la pantalla encendida.</p>
+      <p id="wake-status" class="wake-status" hidden></p>
+    </section>
+    <section class="roster" aria-label="Autos en el mapa">
+      <div class="section-title"><h2>En el camino</h2><span id="participant-count" class="count-badge">0</span></div>
+      <p class="roster-subtitle muted">Autos con ubicación compartida</p>
+      <div id="participant-list" class="participant-list"></div>
+      <div id="empty-roster" class="empty-roster"><span class="empty-icon"><svg class="icon"><use href="#i-car"/></svg></span><strong>La rodada empieza contigo.</strong><p>Cuando alguien comparta su ubicación,<br>lo encontrarás aquí y en el mapa.</p></div>
+    </section>
+    <div class="sidebar-foot"><span class="little-star">✦</span> QUE NADIE SE QUEDE ATRÁS.</div>
+  </aside>
+  <section class="map-section" aria-label="Mapa del club">
+    <div class="map-topline"><div><span class="live-dot" id="connection-dot"></span><strong>Mapa en vivo</strong><span id="connection-status" class="muted" role="status">Conectando…</span></div><span class="map-mode">OLD CLASSIC CLUB</span></div>
+    <div class="map-canvas-wrap">
+      <div id="map" aria-label="Ubicación de los autos del club"></div>
+      <div class="map-label"><span class="live-dot"></span><span id="map-counter">ESPERANDO A LA RODADA</span></div>
+      <div class="map-tools"><button id="locate-me" class="map-tool" title="Localizarme" aria-label="Localizarme"><svg class="icon"><use href="#i-target"/></svg></button><button id="fit-group" class="map-tool" title="Ver todo el grupo" aria-label="Ver todo el grupo"><svg class="icon"><use href="#i-group"/></svg></button></div>
+      <div class="map-legend"><span><i class="legend-dot"></i>Compartiendo</span><span><i class="legend-dot stale-dot"></i>Sin actualizar</span></div>
+      <div id="map-unavailable" class="map-unavailable" role="status" hidden>El mapa no pudo cargar. Revisa tu conexión; la lista de autos sigue disponible.</div>
+    </div>
+    <div class="map-footer"><svg class="icon"><use href="#i-info"/></svg><span>La ubicación depende del GPS y de la conexión de cada participante.</span><a href="https://www.openstreetmap.org/fixthemap" target="_blank" rel="noopener">Reportar un error del mapa ↗</a></div>
+  </section>
+</main>
+<div class="mobile-dock"><button class="button button-primary share-button" type="button"><svg class="icon"><use href="#i-pin"/></svg><span>Compartir mi ubicación</span></button></div>
+<dialog id="profile-dialog" aria-labelledby="profile-heading">
+  <div class="dialog-heading"><div><span class="eyebrow">TU LUGAR EN EL CLUB</span><h2 id="profile-heading">Mi perfil</h2></div><button id="profile-close" class="icon-button" aria-label="Cerrar perfil"><svg class="icon"><use href="#i-close"/></svg></button></div>
+  <form id="profile-form">
+    <label>Alias<input name="alias" value="{{ user.alias }}" maxlength="40" required></label>
+    <label>Tu auto<input name="car" value="{{ user.car }}" maxlength="80" required></label>
+    <div class="field-row"><label>Año <span class="optional">opcional</span><input name="year" type="number" value="{{ user.year or '' }}" min="1886" max="2100" inputmode="numeric"></label><label>Color <span class="optional">opcional</span><input name="color" value="{{ user.color }}" maxlength="30"></label></div>
+    <p class="profile-email">{{ user.email }} <span class="muted">· Solo visible para ti</span></p>
+    <p id="profile-error" class="form-error" role="alert" hidden></p>
+    <button class="button button-primary" type="submit">Guardar cambios<svg class="icon"><use href="#i-check"/></svg></button>
+  </form>
+</dialog>
+<div id="app-data" data-user-id="{{ user.id }}"></div>
+{% endblock %}
+

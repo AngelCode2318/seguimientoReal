@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Únete al club' if mode == 'register' else 'Bienvenido' }} · Old Classic Club{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='auth.js') }}" defer></script>{% endblock %}
+{% block body %}
+<main class="auth-layout">
+  <section class="auth-story" aria-label="Old Classic Club">
+    <a class="brand brand-light" href="/login"><span class="brand-round">OCC</span><span>OLD CLASSIC<span class="brand-sub">C L U B</span></span></a>
+    <div class="story-copy"><span class="eyebrow light-eyebrow">BUENOS AUTOS. MEJOR COMPAÑÍA.</span>
+      <h1>El camino se disfruta<br>en buena compañía.</h1>
+      <p>Encuentra a los tuyos. Comparte la rodada.<br>Que nadie se quede atrás.</p>
+    </div>
+    <div class="classic-art" aria-hidden="true">
+      <svg viewBox="0 0 680 290" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="494" cy="92" r="66" fill="#e7c5a0" opacity=".16"/>
+        <path d="M0 199 106 133l72 30 99-82 113 99 105-39 185 71" fill="none" stroke="#ddba99" stroke-width="1" opacity=".25"/>
+        <path d="M0 249h680M80 270h83m53 0h94m58 0h128m68 0h82" stroke="#dfbd9b" opacity=".3"/>
+        <ellipse cx="339" cy="249" rx="248" ry="12" fill="#291619" opacity=".4"/>
+        <path d="m114 207 18-37 89-14 62-64h133l70 63 70 22 11 41-18 14H126Z" fill="#d5b38e"/>
+        <path d="m238 155 53-54h55v54Zm119-54h52l56 54H357Z" fill="#3c3432"/>
+        <path d="m248 149 47-45h14l-44 45Zm122-45h12l50 45h-14Z" fill="#7b7063"/>
+        <path d="M126 191h425l7 24H120Z" fill="#c39b74"/>
+        <path d="M118 212h441v12H119Z" fill="#e9d7bc"/>
+        <path d="M344 161v59m128-58 8 52M137 179h48m305-2 43 14" stroke="#886849" stroke-width="2"/>
+        <rect x="360" y="169" width="21" height="4" rx="2" fill="#785b46"/>
+        <circle cx="211" cy="225" r="37" fill="#2e2726"/><circle cx="211" cy="225" r="24" fill="#eee1cd"/><circle cx="211" cy="225" r="17" fill="#9b8a73"/><circle cx="211" cy="225" r="9" fill="#d9cbb7"/>
+        <circle cx="471" cy="225" r="37" fill="#2e2726"/><circle cx="471" cy="225" r="24" fill="#eee1cd"/><circle cx="471" cy="225" r="17" fill="#9b8a73"/><circle cx="471" cy="225" r="9" fill="#d9cbb7"/>
+        <path d="m128 179-7 15h18l5-15Z" fill="#f5e6c9"/><path d="m542 184 8 19h-13l-8-23Z" fill="#883b37"/>
+      </svg>
+    </div>
+    <div class="story-footer"><span class="little-star">✦</span><span>LA MISMA PASIÓN. UN MISMO CAMINO.</span><span class="story-line"></span></div>
+  </section>
+  <section class="auth-form-section">
+    <div class="auth-form-wrap">
+      <span class="eyebrow">EL PUNTO DE ENCUENTRO</span>
+      <h2>{{ 'Un lugar en la rodada.' if mode == 'register' else 'Qué gusto verte.' }}</h2>
+      <p class="muted auth-intro">{{ 'Crea tu cuenta y encuentra al club en el mapa.' if mode == 'register' else 'Entra para ver dónde se reúne el club.' }}</p>
+      <nav class="auth-tabs" aria-label="Acceso al club"><a href="/login" class="{{ 'selected' if mode == 'login' }}" {{ 'aria-current=page' if mode == 'login' }}>Iniciar sesión</a><a href="/register" class="{{ 'selected' if mode == 'register' }}" {{ 'aria-current=page' if mode == 'register' }}>Crear cuenta</a></nav>
+      <form id="auth-form" data-mode="{{ mode }}">
+        {% if mode == 'register' %}
+        <div class="field-row"><label>Tu alias<input name="alias" autocomplete="nickname" placeholder="Ej. Alex" maxlength="40" required></label><label>Tu auto<input name="car" placeholder="Ej. Mustang" maxlength="80" required></label></div>
+        <div class="field-row"><label>Año <span class="optional">opcional</span><input name="year" type="number" min="1886" max="2100" placeholder="1967" inputmode="numeric"></label><label>Color <span class="optional">opcional</span><input name="color" placeholder="Rojo cereza" maxlength="30"></label></div>
+        {% endif %}
+        <label>Correo electrónico<input name="email" type="email" autocomplete="email" placeholder="tu@correo.com" maxlength="254" required></label>
+        <label>Contraseña<input name="password" type="password" autocomplete="{{ 'new-password' if mode == 'register' else 'current-password' }}" placeholder="{{ 'Al menos 10 caracteres' if mode == 'register' else 'Tu contraseña' }}" {% if mode == 'register' %}minlength="10"{% endif %} maxlength="128" required></label>
+        <p id="form-error" class="form-error" role="alert" hidden></p>
+        <button class="button button-primary auth-submit" type="submit"><span>{{ 'Crear mi cuenta' if mode == 'register' else 'Entrar al mapa' }}</span><svg class="icon"><use href="#i-arrow"/></svg></button>
+      </form>
+      <div class="auth-note"><svg class="icon"><use href="#i-pin"/></svg><p>Tu ubicación la decides tú.<br><span class="muted">Solo se comparte cuando tú la activas.</span></p></div>
+      <p class="test-footnote">VERSIÓN DE PRUEBA · Los registros pueden reiniciarse.<br>Sin verificación ni recuperación de contraseña por correo.</p>
+    </div>
+  </section>
+</main>
+{% endblock %}
+
