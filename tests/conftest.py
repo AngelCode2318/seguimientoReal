@@ -12,21 +12,17 @@ def app(tmp_path):
         "SECRET_KEY": "test-only-secret",
         "DATABASE_PATH": str(tmp_path / "club.sqlite3"),
         "START_CLEANUP_TASK": False,
-        "PASSWORD_HASH_METHOD": "pbkdf2:sha256:1000",
     })
 
 
 def csrf(client):
-    html = client.get("/login").get_data(as_text=True)
-    if 'name="csrf-token"' not in html:
-        html = client.get("/").get_data(as_text=True)
+    html = client.get("/").get_data(as_text=True)
     return re.search(r'name="csrf-token" content="([^"]+)"', html)[1]
 
 
-def register(app, name="alex"):
+def enter(app, name="alex"):
     client = app.test_client()
-    response = client.post("/api/register", json={
-        "email": f"{name}@example.com", "password": "correct-horse-67",
+    response = client.post("/api/enter", json={
         "alias": name, "car": "Mustang", "year": 1967, "color": "Rojo",
     }, headers={"X-CSRF-Token": csrf(client)})
     assert response.status_code == 201, response.json

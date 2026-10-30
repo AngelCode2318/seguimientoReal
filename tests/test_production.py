@@ -16,16 +16,14 @@ def test_production_requires_a_secret(monkeypatch):
 def test_https_proxy_wraps_socketio_and_cookies_are_secure(tmp_path, monkeypatch):
     monkeypatch.setenv("APP_ENV", "production")
     app = create_app({"TESTING": True, "SECRET_KEY": "production-test-only",
-        "DATABASE_PATH": str(tmp_path / "production.sqlite3"), "START_CLEANUP_TASK": False,
-        "PASSWORD_HASH_METHOD": "pbkdf2:sha256:1000"})
+        "DATABASE_PATH": str(tmp_path / "production.sqlite3"), "START_CLEANUP_TASK": False})
     assert isinstance(app.wsgi_app, ProxyFix)
     assert "SocketIO" in type(app.wsgi_app.app).__name__
     client = app.test_client()
     headers = {"X-Forwarded-Proto": "https", "Origin": "https://localhost"}
-    page = client.get("/register", headers=headers)
+    page = client.get("/", headers=headers)
     csrf = re.search(r'name="csrf-token" content="([^"]+)"', page.text)[1]
-    response = client.post("/api/register", json={"alias": "Alex", "car": "Mustang",
-        "email": "alex@example.com", "password": "correct-horse-67"},
+    response = client.post("/api/enter", json={"alias": "Alex", "car": "Mustang"},
         headers={**headers, "X-CSRF-Token": csrf})
     assert response.status_code == 201
     cookies = response.headers.getlist("Set-Cookie")

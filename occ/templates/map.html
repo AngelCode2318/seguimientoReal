@@ -11,7 +11,7 @@
 <header class="app-header">
   <a class="brand" href="/"><span class="brand-round">OCC</span><span>OLD CLASSIC<span class="brand-sub">C L U B</span></span></a>
   <div class="header-middle"><svg class="icon"><use href="#i-pin"/></svg><span>EL PUNTO DE ENCUENTRO</span></div>
-  <div class="header-actions"><button id="profile-open" class="profile-button" aria-label="Editar mi perfil"><span class="avatar">{{ user.alias[:1]|upper }}</span><span id="header-alias">{{ user.alias }}</span><svg class="icon"><use href="#i-user"/></svg></button><button id="logout" class="icon-button" title="Cerrar sesión" aria-label="Cerrar sesión"><svg class="icon"><use href="#i-exit"/></svg></button></div>
+  <div class="header-actions"><button id="profile-open" class="profile-button" aria-label="Editar mi perfil"><span class="avatar">{{ user.alias[:1]|upper }}</span><span id="header-alias">{{ user.alias }}</span><svg class="icon"><use href="#i-user"/></svg></button><button id="logout" class="icon-button" title="Salir de la rodada" aria-label="Salir de la rodada"><svg class="icon"><use href="#i-exit"/></svg></button></div>
 </header>
 <main class="club-layout">
   <aside class="sidebar">
@@ -19,7 +19,7 @@
     <section class="sharing-card" aria-label="Compartir mi ubicación">
       <div class="sharing-heading"><span class="sharing-symbol"><svg class="icon"><use href="#i-pin"/></svg></span><div><strong id="share-title">Tú eliges cuándo.</strong><p id="share-description">Tu ubicación está desactivada.</p></div></div>
       <button class="button button-primary share-button" type="button"><svg class="icon"><use href="#i-pin"/></svg><span>Compartir mi ubicación</span></button>
-      <p class="sharing-tip">Todos los registrados podrán verte mientras compartas. Mantén la web abierta y la pantalla encendida.</p>
+      <p class="sharing-tip">Todos los participantes podrán verte mientras compartas. Mantén la web abierta y la pantalla encendida.</p>
       <p id="wake-status" class="wake-status" hidden></p>
     </section>
     <section class="roster" aria-label="Autos en el mapa">
@@ -49,7 +49,6 @@
     <label>Alias<input name="alias" value="{{ user.alias }}" maxlength="40" required></label>
     <label>Tu auto<input name="car" value="{{ user.car }}" maxlength="80" required></label>
     <div class="field-row"><label>Año <span class="optional">opcional</span><input name="year" type="number" value="{{ user.year or '' }}" min="1886" max="2100" inputmode="numeric"></label><label>Color <span class="optional">opcional</span><input name="color" value="{{ user.color }}" maxlength="30"></label></div>
-    <p class="profile-email">{{ user.email }} <span class="muted">· Solo visible para ti</span></p>
     <p id="profile-error" class="form-error" role="alert" hidden></p>
     <button class="button button-primary" type="submit">Guardar cambios<svg class="icon"><use href="#i-check"/></svg></button>
   </form>

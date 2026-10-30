@@ -2,7 +2,7 @@ import time
 
 import pytest
 
-from conftest import register, socket_client
+from conftest import enter, socket_client
 from occ import create_app
 from occ.db import get_db
 
@@ -20,11 +20,11 @@ def publish(socket, **changes):
 
 
 def test_broadcast_privacy_stop_and_logout(app):
-    a, a_csrf, a_user = register(app, "alex")
-    b, b_csrf, _ = register(app, "bea")
+    a, a_csrf, a_user = enter(app, "alex")
+    b, b_csrf, _ = enter(app, "bea")
     first, second = socket_client(app, a, a_csrf), socket_client(app, b, b_csrf)
     assert a.get("/api/participants").json["participants"] == []
-    assert not publish(first)["ok"]  # Login alone is not consent.
+    assert not publish(first)["ok"]  # Entering the map alone is not consent.
     start(first)
     assert publish(first)["ok"]
     events = second.get_received()
@@ -43,7 +43,7 @@ def test_broadcast_privacy_stop_and_logout(app):
 
 
 def test_rate_limit_and_new_sample_moves_car(app):
-    client, token, _ = register(app)
+    client, token, _ = enter(app)
     socket = socket_client(app, client, token)
     start(socket)
     assert publish(socket)["ok"]
@@ -57,7 +57,7 @@ def test_rate_limit_and_new_sample_moves_car(app):
 
 
 def test_single_emitter_and_old_disconnect_does_not_affect_new_owner(app):
-    client, token, _ = register(app)
+    client, token, _ = enter(app)
     old, new = socket_client(app, client, token), socket_client(app, client, token)
     start(old)
     assert publish(old)["ok"]
@@ -72,7 +72,7 @@ def test_single_emitter_and_old_disconnect_does_not_affect_new_owner(app):
 
 
 def test_stale_expiry_reconnection_and_no_cached_replay(app):
-    client, token, _ = register(app)
+    client, token, _ = enter(app)
     socket = socket_client(app, client, token)
     start(socket)
     assert publish(socket)["ok"]
@@ -102,7 +102,7 @@ def test_stale_expiry_reconnection_and_no_cached_replay(app):
     {"captured_at": 1}, {"captured_at": time.time()+10000},
 ])
 def test_rejects_invalid_positions(app, changes):
-    client, token, _ = register(app)
+    client, token, _ = enter(app)
     socket = socket_client(app, client, token)
     start(socket)
     assert not publish(socket, **changes)["ok"]
@@ -110,7 +110,7 @@ def test_rejects_invalid_positions(app, changes):
 
 
 def test_profile_changes_are_broadcast_without_private_email(app):
-    client, token, _ = register(app)
+    client, token, _ = enter(app)
     socket = socket_client(app, client, token)
     start(socket)
     assert publish(socket)["ok"]
@@ -122,8 +122,8 @@ def test_profile_changes_are_broadcast_without_private_email(app):
 
 
 def test_expired_viewer_receives_no_coordinates(app):
-    a, a_token, _ = register(app, "alex")
-    b, b_token, b_user = register(app, "bea")
+    a, a_token, _ = enter(app, "alex")
+    b, b_token, b_user = enter(app, "bea")
     first, expired = socket_client(app, a, a_token), socket_client(app, b, b_token)
     with app.app_context():
         with get_db() as db:
@@ -133,8 +133,8 @@ def test_expired_viewer_receives_no_coordinates(app):
     assert not expired.is_connected()
 
 
-def test_restart_keeps_accounts_but_never_restores_sharing(app):
-    client, token, _ = register(app)
+def test_restart_keeps_participants_but_never_restores_sharing(app):
+    client, token, _ = enter(app)
     socket = socket_client(app, client, token)
     start(socket)
     assert publish(socket)["ok"]
@@ -148,7 +148,7 @@ def test_thirty_clients_receive_one_marker_per_car(app):
     # Protocol-level regression test; tools/load_test.py exercises real WebSockets.
     clients = []
     for index in range(30):
-        http, token, _ = register(app, f"car{index:02}")
+        http, token, _ = enter(app, f"car{index:02}")
         clients.append((http, socket_client(app, http, token)))
     for _, socket in clients:
         start(socket)

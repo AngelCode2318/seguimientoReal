@@ -38,7 +38,6 @@ def main():
             app = create_app({
                 "TESTING": True, "SECRET_KEY": "disposable-load-test",
                 "DATABASE_PATH": str(Path(temporary) / "club.sqlite3"),
-                "PASSWORD_HASH_METHOD": "pbkdf2:sha256:1000",
             })
         finally:
             if previous_env is None:
@@ -57,14 +56,13 @@ def main():
                 if options.https_proxy:
                     http.headers.update({"X-Forwarded-Proto": "https", "Origin": url.replace("http:", "https:")})
                 http_sessions.append(http)
-                html = http.get(url + "/register", timeout=10).text
+                html = http.get(url + "/", timeout=10).text
                 if options.https_proxy:
                     assert all(cookie.secure for cookie in http.cookies)
                     for cookie in http.cookies:
                         cookie.secure = False
                 csrf = re.search(r'name="csrf-token" content="([^"]+)"', html)[1]
-                response = http.post(url + "/api/register", json={
-                    "email": f"car{index}@example.com", "password": "synthetic-load-test",
+                response = http.post(url + "/api/enter", json={
                     "alias": f"Auto {index+1}", "car": "Mustang", "year": 1967,
                 }, headers={"X-CSRF-Token": csrf}, timeout=10)
                 assert response.status_code == 201, response.text

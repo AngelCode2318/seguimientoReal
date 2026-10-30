@@ -1,12 +1,10 @@
 import os
 import secrets
 from pathlib import Path
-from threading import BoundedSemaphore
 
 from flask import Flask, g, jsonify, redirect, render_template, request, session, url_for
 from flask_socketio import SocketIO
 from werkzeug.middleware.proxy_fix import ProxyFix
-from werkzeug.security import generate_password_hash
 
 from . import auth, db
 
@@ -22,7 +20,6 @@ def create_app(config=None):
         SESSION_COOKIE_SAMESITE="Lax",
         SESSION_COOKIE_SECURE=production,
         MAX_CONTENT_LENGTH=16 * 1024,
-        PASSWORD_HASH_METHOD="scrypt",
         START_CLEANUP_TASK=True,
         POSITION_INTERVAL=5,
     )
@@ -34,11 +31,6 @@ def create_app(config=None):
         app.config["SECRET_KEY"] = secrets.token_hex(32)
     db.init_db(app)
     app.extensions["auth_limiter"] = auth.AttemptLimiter()
-    # Bound scrypt's memory usage during simultaneous signups/logins on a free host.
-    app.extensions["password_slots"] = BoundedSemaphore(2)
-    app.extensions["dummy_password_hash"] = generate_password_hash(
-        secrets.token_hex(16), method=app.config["PASSWORD_HASH_METHOD"]
-    )
 
     @app.before_request
     def identity_and_csrf():
@@ -76,21 +68,13 @@ def create_app(config=None):
     @app.get("/")
     def index():
         if not g.user:
-            return redirect(url_for("login_page"))
-        user = {**db.public_user(g.user), "email": g.user["email"]}
-        return render_template("map.html", user=user, csrf_token=auth.csrf_token())
+            return render_template("auth.html", csrf_token=auth.csrf_token())
+        return render_template("map.html", user=db.public_user(g.user), csrf_token=auth.csrf_token())
 
     @app.get("/login")
-    def login_page():
-        if g.user:
-            return redirect(url_for("index"))
-        return render_template("auth.html", mode="login", csrf_token=auth.csrf_token())
-
     @app.get("/register")
-    def register_page():
-        if g.user:
-            return redirect(url_for("index"))
-        return render_template("auth.html", mode="register", csrf_token=auth.csrf_token())
+    def legacy_entry():
+        return redirect(url_for("index"))
 
     @app.get("/healthz")
     def health():
@@ -105,7 +89,7 @@ def create_app(config=None):
     app.extensions["tracker"] = tracker
 
     @app.get("/api/participants")
-    @auth.require_login
+    @auth.require_session
     def participants():
         return jsonify(tracker.snapshot())
 

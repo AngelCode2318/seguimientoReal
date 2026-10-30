@@ -66,13 +66,30 @@ class Tracker:
         with self.lock:
             self.broadcast_user(user_id)
 
+    def is_active(self, user_id):
+        """Sharing consent plus a connected socket and a non-revoked session."""
+        owner = self.owners.get(user_id)
+        identity = self.sockets.get(owner)
+        return identity is not None and get_db().execute(
+            "SELECT 1 FROM sessions WHERE token_hash=? AND user_id=? AND expires_at>?",
+            (identity[1], user_id, time.time()),
+        ).fetchone() is not None
+
+    def release_participant(self, user_id):
+        """Called with the tracker lock held after old sessions are revoked."""
+        self.remove(user_id)
+        for sid, identity in list(self.sockets.items()):
+            if identity[0] == user_id:
+                self.io.emit("session:expired", {}, to=sid)
+                self.io.server.disconnect(sid, namespace="/")
+
     def logout(self, user_id, session_hash):
         with self.lock:
             with get_db() as db:
                 db.execute("DELETE FROM sessions WHERE token_hash=?", (session_hash,))
             owner = self.owners.get(user_id)
             if owner:
-                self.io.emit("share:replaced", {"message": "Se cerró una sesión de tu cuenta."}, to=owner)
+                self.io.emit("share:replaced", {"message": "Saliste de la rodada desde otra pestaña."}, to=owner)
             self.remove(user_id)
             for sid, identity in list(self.sockets.items()):
                 if identity[1] == session_hash:
@@ -146,7 +163,7 @@ class Tracker:
                     return {"ok": False, "error": "Sesión finalizada."}
                 previous = self.owners.get(user["id"])
                 if previous and previous != request.sid:
-                    self.io.emit("share:replaced", {"message": "Tu ubicación se está compartiendo desde otra pestaña o dispositivo."}, to=previous)
+                    self.io.emit("share:replaced", {"message": "Tu auto se está compartiendo desde otra pestaña o dispositivo."}, to=previous)
                     self.remove(user["id"])
                 self.owners[user["id"]] = request.sid
                 return {"ok": True}

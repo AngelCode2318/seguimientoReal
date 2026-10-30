@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
-{% block title %}{{ 'Únete al club' if mode == 'register' else 'Bienvenido' }} · Old Classic Club{% endblock %}
+{% block title %}Entra a la rodada · Old Classic Club{% endblock %}
 {% block body_class %}auth-page{% endblock %}
 {% block scripts %}<script src="{{ url_for('static', filename='auth.js') }}" defer></script>{% endblock %}
 {% block body %}
 <main class="auth-layout">
   <section class="auth-story" aria-label="Old Classic Club">
-    <a class="brand brand-light" href="/login"><span class="brand-round">OCC</span><span>OLD CLASSIC<span class="brand-sub">C L U B</span></span></a>
+    <a class="brand brand-light" href="/"><span class="brand-round">OCC</span><span>OLD CLASSIC<span class="brand-sub">C L U B</span></span></a>
     <div class="story-copy"><span class="eyebrow light-eyebrow">BUENOS AUTOS. MEJOR COMPAÑÍA.</span>
       <h1>El camino se disfruta<br>en buena compañía.</h1>
       <p>Encuentra a los tuyos. Comparte la rodada.<br>Que nadie se quede atrás.</p>
@@ -33,21 +33,16 @@
   <section class="auth-form-section">
     <div class="auth-form-wrap">
       <span class="eyebrow">EL PUNTO DE ENCUENTRO</span>
-      <h2>{{ 'Un lugar en la rodada.' if mode == 'register' else 'Qué gusto verte.' }}</h2>
-      <p class="muted auth-intro">{{ 'Crea tu cuenta y encuentra al club en el mapa.' if mode == 'register' else 'Entra para ver dónde se reúne el club.' }}</p>
-      <nav class="auth-tabs" aria-label="Acceso al club"><a href="/login" class="{{ 'selected' if mode == 'login' }}" {{ 'aria-current=page' if mode == 'login' }}>Iniciar sesión</a><a href="/register" class="{{ 'selected' if mode == 'register' }}" {{ 'aria-current=page' if mode == 'register' }}>Crear cuenta</a></nav>
-      <form id="auth-form" data-mode="{{ mode }}">
-        {% if mode == 'register' %}
+      <h2>Un lugar en la rodada.</h2>
+      <p class="muted auth-intro">Cuéntanos quién viene y encuentra al club en el mapa.</p>
+      <form id="auth-form">
         <div class="field-row"><label>Tu alias<input name="alias" autocomplete="nickname" placeholder="Ej. Alex" maxlength="40" required></label><label>Tu auto<input name="car" placeholder="Ej. Mustang" maxlength="80" required></label></div>
         <div class="field-row"><label>Año <span class="optional">opcional</span><input name="year" type="number" min="1886" max="2100" placeholder="1967" inputmode="numeric"></label><label>Color <span class="optional">opcional</span><input name="color" placeholder="Rojo cereza" maxlength="30"></label></div>
-        {% endif %}
-        <label>Correo electrónico<input name="email" type="email" autocomplete="email" placeholder="tu@correo.com" maxlength="254" required></label>
-        <label>Contraseña<input name="password" type="password" autocomplete="{{ 'new-password' if mode == 'register' else 'current-password' }}" placeholder="{{ 'Al menos 10 caracteres' if mode == 'register' else 'Tu contraseña' }}" {% if mode == 'register' %}minlength="10"{% endif %} maxlength="128" required></label>
         <p id="form-error" class="form-error" role="alert" hidden></p>
-        <button class="button button-primary auth-submit" type="submit"><span>{{ 'Crear mi cuenta' if mode == 'register' else 'Entrar al mapa' }}</span><svg class="icon"><use href="#i-arrow"/></svg></button>
+        <button class="button button-primary auth-submit" type="submit"><span>Entrar al mapa</span><svg class="icon"><use href="#i-arrow"/></svg></button>
       </form>
       <div class="auth-note"><svg class="icon"><use href="#i-pin"/></svg><p>Tu ubicación la decides tú.<br><span class="muted">Solo se comparte cuando tú la activas.</span></p></div>
-      <p class="test-footnote">VERSIÓN DE PRUEBA · Los registros pueden reiniciarse.<br>Sin verificación ni recuperación de contraseña por correo.</p>
+      <p class="test-footnote">VERSIÓN DE PRUEBA · Los participantes pueden reiniciarse.</p>
     </div>
   </section>
 </main>

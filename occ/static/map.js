@@ -150,7 +150,7 @@
       ...(data !== undefined ? {body: JSON.stringify(data)} : {}),
     });
     const result = await response.json();
-    if (response.status === 401) { window.location.assign("/login"); throw new Error("Tu sesión terminó."); }
+    if (response.status === 401) { window.location.assign("/"); throw new Error("Vuelve a entrar al mapa."); }
     if (!response.ok) throw new Error(result.error || "No se pudo completar la solicitud.");
     return result;
   }
@@ -321,7 +321,7 @@
       try { await api("/api/me"); } catch (_) { /* api redirects expired sessions */ }
     });
     socket.on("share:replaced", (data) => { stopSharing(false, false); toast(data.message); });
-    socket.on("session:expired", () => { stopSharing(false, false); window.location.assign("/login"); });
+    socket.on("session:expired", () => { stopSharing(false, false); window.location.assign("/"); });
   } else {
     $("#connection-status").textContent = "No se pudo cargar la conexión";
     $("#connection-dot").classList.add("offline");
@@ -350,7 +350,7 @@
     finally { button.disabled = false; }
   });
   $("#logout").addEventListener("click", async () => {
-    try { await api("/api/logout", "POST"); window.location.assign("/login"); }
+    try { await api("/api/logout", "POST"); window.location.assign("/"); }
     catch (error) { toast(error.message); }
   });
   setInterval(render, 1000);
