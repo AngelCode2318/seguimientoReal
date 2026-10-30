@@ -4,6 +4,7 @@
 <script src="{{ url_for('static', filename='vendor/leaflet/leaflet.js') }}" defer></script>
 <script src="{{ url_for('static', filename='vendor/socket.io.min.js') }}" defer></script>
 <script src="{{ url_for('static', filename='map.js') }}" defer></script>
+<script src="{{ url_for('static', filename='fullscreen.js') }}" defer></script>
 {% endblock %}
 {% block body_class %}map-page{% endblock %}
 {% block body %}
@@ -14,7 +15,7 @@
 </header>
 <main class="club-layout">
   <aside class="sidebar">
-    <div class="sidebar-heading"><span class="eyebrow">JUNTOS, EN EL CAMINO</span><h1>La rodada,<br>en el mapa.</h1><p class="muted">La misma pasión. Ahora, más cerca.</p></div>
+    <div class="sidebar-heading"><span class="eyebrow">JUNTOS, EN EL CAMINO</span><h1>La rodada, <br>en el mapa.</h1><p class="muted">La misma pasión. Ahora, más cerca.</p></div>
     <section class="sharing-card" aria-label="Compartir mi ubicación">
       <div class="sharing-heading"><span class="sharing-symbol"><svg class="icon"><use href="#i-pin"/></svg></span><div><strong id="share-title">Tú eliges cuándo.</strong><p id="share-description">Tu ubicación está desactivada.</p></div></div>
       <button class="button button-primary share-button" type="button"><svg class="icon"><use href="#i-pin"/></svg><span>Compartir mi ubicación</span></button>
@@ -34,7 +35,7 @@
     <div class="map-canvas-wrap">
       <div id="map" aria-label="Ubicación de los autos del club"></div>
       <div class="map-label"><span class="live-dot"></span><span id="map-counter">ESPERANDO A LA RODADA</span></div>
-      <div class="map-tools"><button id="locate-me" class="map-tool" title="Localizarme" aria-label="Localizarme"><svg class="icon"><use href="#i-target"/></svg></button><button id="fit-group" class="map-tool" title="Ver todo el grupo" aria-label="Ver todo el grupo"><svg class="icon"><use href="#i-group"/></svg></button></div>
+      <div class="map-tools"><button id="toggle-map-fullscreen" class="map-tool" type="button" title="Ver mapa en pantalla completa" aria-label="Ver mapa en pantalla completa" aria-controls="map" aria-pressed="false"><svg class="icon"><use href="#i-expand"/></svg></button><button id="locate-me" class="map-tool" title="Localizarme" aria-label="Localizarme"><svg class="icon"><use href="#i-target"/></svg></button><button id="fit-group" class="map-tool" title="Ver todo el grupo" aria-label="Ver todo el grupo"><svg class="icon"><use href="#i-group"/></svg></button></div>
       <div class="map-legend"><span><i class="legend-dot"></i>Compartiendo</span><span><i class="legend-dot stale-dot"></i>Sin actualizar</span></div>
       <div id="map-unavailable" class="map-unavailable" role="status" hidden>El mapa no pudo cargar. Revisa tu conexión; la lista de autos sigue disponible.</div>
     </div>

@@ -32,6 +32,8 @@ En Linux/macOS, los comandos equivalentes usan `.venv/bin/python`. `app.py` es �
 
 **Localizarme** centra el mapa en tu posición sin publicarla. **Ver todo el grupo** encuadra los autos visibles. Seleccionar un participante centra su marcador. El botón del perfil permite actualizar alias y auto.
 
+El botón de **pantalla completa**, en la esquina superior derecha del mapa, muestra únicamente el mapa y sus controles. Pulsa de nuevo para volver o utiliza **Esc**. El seguimiento continúa durante esta vista. Cuando el navegador no permite pantalla completa nativa, el mapa ocupa el área visible de la página y sus barras pueden seguir presentes. La [API de pantalla completa](https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API/Guide) depende de la compatibilidad y los permisos del navegador.
+
 La app permite una sola pestaña o dispositivo emisor por cuenta. Activar compartir desde otro sustituye al anterior. La reconexión de una pestaña que seguía compartiendo solicita muestras nuevas; recargar la página deja compartir desactivado.
 
 ## Desplegar en Render
